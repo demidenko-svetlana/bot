@@ -1,5 +1,6 @@
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
-#import ephem
+import ephem, datetime
+
 
 PROXY = {'proxy_url': 'socks5://t1.learn.python.ru:1080',
     'urllib3_proxy_kwargs': {'username': 'learn', 'password': 'python'}}
@@ -10,23 +11,39 @@ def main():
     dp = mybot.dispatcher
     dp.add_handler(CommandHandler("start", greet_user))
     dp.add_handler(MessageHandler(Filters.text, talk_to_me))
-    #dp.add_handler(CommandHandler("planet", planet_user))
+    dp.add_handler(CommandHandler("planet", planet_knowledge))
     mybot.start_polling() #проверка, есть ли что-то новое
     mybot.idle()
+
 
 def greet_user(bot, update):
     print('Вызван /start') 
     print(update)
+
 
 def greet_user(bot, update):
     text = 'Вызван /start'
     print(text)
     update.message.reply_text(text)
 
+ 
 def talk_to_me(bot, update):
     user_text = update.message.text 
     print(user_text)
-    update.message.reply_text(user_text)  
+    update.message.reply_text(user_text)
 
 
-main()    
+def planet_knowledge(bot, update):
+    user_text = update.message.text
+    dt_now = datetime.now()
+    try:
+        name_planet = user_text.split()[1]
+        ephem_planet = getattr(ephem, name_planet)
+        planet = ephem_planet(dt_now)
+        constellation = ephem.constellation(planet)
+        print(constellation)
+    except AttributeError:
+        print("There is no planet like this")
+
+
+main()   
