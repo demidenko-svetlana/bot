@@ -35,15 +35,17 @@ def talk_to_me(bot, update):
 
 def planet_knowledge(bot, update):
     user_text = update.message.text
-    dt_now = datetime.now()
+    dt_now = datetime.datetime.now()
     try:
         name_planet = user_text.split()[1]
         ephem_planet = getattr(ephem, name_planet)
         planet = ephem_planet(dt_now)
         constellation = ephem.constellation(planet)
         print(constellation)
+        update.message.reply_text(constellation)
+        update.message.reply_text(dt_now.strftime('%d.%m.%Y %H:%M'))
     except AttributeError:
         print("There is no planet like this")
-
+        update.message.reply_text(text="There is no planet like this")
 
 main()   
